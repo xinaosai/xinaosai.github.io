@@ -189,7 +189,7 @@ async function doReg() {
   var r = await sb.auth.signUp({ email: e, password: p, options: { data: { nickname: n } } });
   if (r.error) return showMsg('regErr', r.error.message);
   if (r.data.user) {
-    await sb.from('credits').insert({ user_id: r.data.user.id, credits: 1, email: e });
+    var cr = await sb.from('credits').insert({ user_id: r.data.user.id, credits: 1, email: e }); if (cr.error) { showMsg('regErr', '额度创建失败: ' + cr.error.message); return; }
     await sb.from('credit_logs').insert({ user_id: r.data.user.id, action: '🎁 注册赠送', amount: 1, balance: 1 });
   }
   showMsg('regErr', '');
