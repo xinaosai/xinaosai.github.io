@@ -36,7 +36,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${process.env.AGNES_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-3.5-turbo',
         messages: [systemPrompt, ...messages],
         temperature: 0.7,
         max_tokens: 1500
