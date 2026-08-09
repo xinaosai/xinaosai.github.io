@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🤖 AI 1v1 辅导 - 信奥赛C++</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:#f5f7fa;color:#333;min-height:100vh;line-height:1.7}
+
+/* Nav */
+nav{background:linear-gradient(135deg,#0f3460,#1a1a2e,#16213e);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-brand{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:8px}
+.nav-links{display:flex;gap:12px;list-style:none}
+.nav-links a{color:rgba(255,255,255,.85);text-decoration:none;padding:6px 14px;border-radius:8px;font-size:.85rem;transition:.2s}
+.nav-links a:hover{background:rgba(255,255,255,.12);color:#fff}
+
+/* Container */
+.container{max-width:900px;margin:0 auto;padding:40px 20px}
+
+/* Cards */
+.card{background:#fff;border-radius:14px;padding:32px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08);border:1px solid #e2e8f0}
+
+/* Forms */
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-weight:600;margin-bottom:6px;color:#1a1a2e;font-size:.9rem}
+.form-group input{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:1rem;transition:.2s;background:#f8fafc}
+.form-group input:focus{outline:none;border-color:#58a6ff;background:#fff}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:12px 28px;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;transition:.25s;text-decoration:none;width:100%;justify-content:center}
+.btn-primary{background:linear-gradient(135deg,#e94560,#c23152);color:#fff}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(233,69,96,.35)}
+.btn-blue{background:linear-gradient(135deg,#0f3460,#1a1a2e);color:#fff}
+.btn-blue:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(15,52,96,.35)}
+.btn-outline{background:#fff;border:2px solid #e2e8f0;color:#555}
+.btn-outline:hover{border-color:#e94560;color:#e94560}
+.btn-sm{padding:8px 18px;font-size:.85rem;width:auto}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* Tabs */
+.tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid #e2e8f0}
+.tab{padding:10px 24px;cursor:pointer;color:#888;font-weight:600;transition:.2s;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab.active{color:#e94560;border-bottom-color:#e94560}
+
+/* Credit Display */
+.credit-display{text-align:center;padding:10px 0}
+.credit-num{font-size:3.5rem;font-weight:800;background:linear-gradient(135deg,#e94560,#0f3460);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.credit-label{color:#888;font-size:.9rem;margin-top:4px}
+
+/* QR Section */
+.qr-section{text-align:center}
+.qr-section img{width:200px;height:200px;border-radius:12px;border:2px solid #e2e8f0;margin:16px 0}
+.qr-options{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:20px 0}
+.qr-option{text-align:center;padding:16px;border:2px solid #e2e8f0;border-radius:12px;min-width:120px;cursor:pointer;transition:.2s}
+.qr-option:hover{border-color:#58a6ff;transform:translateY(-2px)}
+.qr-option .price{font-size:1.5rem;font-weight:700;color:#e94560}
+.qr-option .uses{font-size:.8rem;color:#888;margin-top:4px}
+.qr-option.selected{border-color:#e94560;background:rgba(233,69,96,.05)}
+
+/* Status badges */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
+.badge-green{background:rgba(46,160,67,.12);color:#2ea043}
+.badge-red{background:rgba(233,69,96,.12);color:#e94560}
+.badge-gray{background:#e2e8f0;color:#666}
+
+/* History table */
+.history-table{width:100%;border-collapse:collapse;margin-top:12px}
+.history-table th,.history-table td{padding:10px 12px;text-align:left;border-bottom:1px solid #e2e8f0;font-size:.9rem}
+.history-table th{color:#888;font-weight:600;font-size:.8rem;text-transform:uppercase}
+
+/* Notice */
+.notice{background:rgba(88,166,255,.08);border-left:4px solid #58a6ff;padding:12px 16px;border-radius:0 8px 8px 0;font-size:.9rem;margin:12px 0}
+
+/* Toast */
+.toast{position:fixed;top:20px;right:20px;padding:12px 20px;border-radius:8px;color:#fff;font-weight:600;z-index:9999;animation:slideIn .3s ease;display:none}
+.toast.success{background:#2ea043}
+.toast.error{background:#e94560}
+@keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* Hidden */
+.hidden{display:none!important}
+
+/* Responsive */
+@media(max-width:600px){
+  .container{padding:20px 12px}
+  .card{padding:20px}
+  .credit-num{font-size:2.5rem}
+  .nav-links a{font-size:.75rem;padding:4px 8px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">🦐 信奥赛C++</a>
+  <ul class="nav-links">
+    <li><a href="index.html">🏠 主页</a></li>
+    <li><a href="round1.html">📋 第一轮</a></li>
+    <li><a href="ai-tutor.html" style="background:rgba(233,69,96,.25);font-weight:700">🤖 AI辅导</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+  <!-- ==================== 未登录 ==================== -->
+  <div id="authSection">
+    <div class="card">
+      <h2 style="text-align:center;margin-bottom:8px">🤖 AI 1v1 信奥辅导</h2>
+      <p style="text-align:center;color:#888;margin-bottom:24px">随时随地，像有个信奥教练陪着你刷题</p>
+      
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('login')">🔑 登录</div>
+        <div class="tab" onclick="switchTab('register')">📝 注册</div>
+      </div>
+
+      <!-- Login -->
+      <div id="loginForm">
+        <div class="form-group">
+          <label>📧 邮箱</label>
+          <input type="email" id="loginEmail" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label>🔒 密码</label>
+          <input type="password" id="loginPassword" placeholder="输入密码">
+        </div>
+        <button class="btn btn-primary" onclick="handleLogin()">登录</button>
+      </div>
+
+      <!-- Register -->
+      <div id="registerForm" class="hidden">
+        <div class="form-group">
+          <label>📧 邮箱</label>
+          <input type="email" id="regEmail" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label>🔒 密码（至少6位）</label>
+          <input type="password" id="regPassword" placeholder="至少6位密码">
+        </div>
+        <div class="form-group">
+          <label>👤 昵称</label>
+          <input type="text" id="regNickname" placeholder="怎么称呼你？">
+        </div>
+        <button class="btn btn-primary" onclick="handleRegister()">注册并开始</button>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center">
+      <p style="color:#888;font-size:.9rem">💡 <strong>新用户注册即送 1 次免费辅导体验！</strong></p>
+      <p style="color:#aaa;font-size:.8rem;margin-top:8px">之后通过赞赏获取更多辅导次数</p>
+      <p style="color:#aaa;font-size:.8rem">2元/次，10元/6次，30元/20次</p>
+    </div>
+  </div>
+
+  <!-- ==================== 已登录 ==================== -->
+  <div id="dashboardSection" class="hidden">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div>
+          <span style="font-weight:700;font-size:1.1rem" id="welcomeName"></span>
+          <button class="btn btn-outline btn-sm" onclick="handleLogout()" style="margin-left:12px">退出</button>
+        </div>
+        <!-- Admin entry (only shown to admin) -->
+        <a href="admin.html" id="adminLink" class="hidden" style="color:#e94560;font-weight:600;text-decoration:none;font-size:.85rem">⚙️ 管理后台</a>
+      </div>
+    </div>
+
+    <!-- Credit Display -->
+    <div class="card">
+      <div class="credit-display">
+        <div class="credit-label">剩余辅导次数</div>
+        <div class="credit-num" id="creditCount">0</div>
+        <div class="credit-label">次</div>
+      </div>
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn btn-primary" id="startTutorBtn" onclick="startTutoring()">
+          🚀 开始 AI 辅导（消耗1次）
+        </button>
+        <p style="color:#888;font-size:.8rem;margin-top:8px">
+          点击后将引导你联系AI教练，通过QQ进行1v1辅导
+        </p>
+      </div>
+    </div>
+
+    <!-- 赞赏充值 -->
+    <div class="card qr-section">
+      <h3 style="text-align:center">💰 赞赏充值</h3>
+      <p style="color:#888;text-align:center;margin:8px 0">选择档位 → 扫码赞赏 → 截图发管理员 → 额度到账</p>
+      
+      <div class="qr-options">
+        <div class="qr-option selected" onclick="selectPlan(1)" data-plan="1">
+          <div class="price">¥2</div>
+          <div class="uses">1次辅导</div>
+        </div>
+        <div class="qr-option" onclick="selectPlan(6)" data-plan="6">
+          <div class="price">¥10</div>
+          <div class="uses">6次辅导</div>
+        </div>
+        <div class="qr-option" onclick="selectPlan(20)" data-plan="20">
+          <div class="price">¥30</div>
+          <div class="uses">20次辅导</div>
+        </div>
+      </div>
+
+      <img src="assets/qrcode.jpg" alt="赞赏码" id="qrImage" style="max-width:220px">
+      
+      <div class="notice">
+        <strong>📌 充值流程：</strong><br>
+        1️⃣ 选择档位 → 2️⃣ 微信扫码赞赏 → 3️⃣ 截图发给管理员（QQ群或微信） → 4️⃣ 额度1小时内到账
+      </div>
+      
+      <p style="color:#aaa;font-size:.8rem;margin-top:8px">
+        管理员QQ：通过 <a href="index.html" target="_blank">首页底部</a> 联系我们
+      </p>
+    </div>
+
+    <!-- 使用记录 -->
+    <div class="card">
+      <h3>📋 使用记录</h3>
+      <table class="history-table" id="historyTable">
+        <thead>
+          <tr><th>时间</th><th>操作</th><th>次数变化</th><th>余额</th></tr>
+        </thead>
+        <tbody id="historyBody">
+          <tr><td colspan="4" style="text-align:center;color:#aaa">暂无记录</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ==================== Supabase 配置 ==================== -->
+<script>
+// ⚙️ 部署时替换为你的 Supabase 信息
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const ADMIN_EMAIL = 'YOUR_ADMIN_EMAIL'; // 管理员邮箱
+
+let supabase;
+try { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e){}
+
+let selectedPlan = 1;
+
+// ==================== 工具函数 ====================
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type}`;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  if (tab === 'login') {
+    document.querySelectorAll('.tab')[0].classList.add('active');
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('registerForm').classList.add('hidden');
+  } else {
+    document.querySelectorAll('.tab')[1].classList.add('active');
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('registerForm').classList.remove('hidden');
+  }
+}
+
+function selectPlan(plan) {
+  selectedPlan = plan;
+  document.querySelectorAll('.qr-option').forEach(o => o.classList.remove('selected'));
+  document.querySelector(`.qr-option[data-plan="${plan}"]`).classList.add('selected');
+}
+
+// ==================== 认证 ====================
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if (!email || !password) return showToast('请填写邮箱和密码', 'error');
+  
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) return showToast(error.message, 'error');
+  showToast('登录成功！🎉');
+  loadDashboard();
+}
+
+async function handleRegister() {
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const nickname = document.getElementById('regNickname').value.trim() || email.split('@')[0];
+  
+  if (!email || !password) return showToast('请填写邮箱和密码', 'error');
+  if (password.length < 6) return showToast('密码至少6位', 'error');
+  
+  const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { nickname } } });
+  if (error) return showToast(error.message, 'error');
+  
+  // 新用户送1次
+  if (data.user) {
+    await supabase.from('credits').insert({ user_id: data.user.id, credits: 1 });
+    await supabase.from('credit_logs').insert({
+      user_id: data.user.id, action: '🎁 注册赠送', amount: 1, balance: 1
+    });
+  }
+  showToast('注册成功！已赠送1次免费体验 🎁');
+  loadDashboard();
+}
+
+async function handleLogout() {
+  await supabase.auth.signOut();
+  document.getElementById('authSection').classList.remove('hidden');
+  document.getElementById('dashboardSection').classList.add('hidden');
+}
+
+// ==================== Dashboard ====================
+async function loadDashboard() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    document.getElementById('authSection').classList.remove('hidden');
+    document.getElementById('dashboardSection').classList.add('hidden');
+    return;
+  }
+  
+  document.getElementById('authSection').classList.add('hidden');
+  document.getElementById('dashboardSection').classList.remove('hidden');
+  
+  const nickname = user.user_metadata?.nickname || user.email?.split('@')[0] || '同学';
+  document.getElementById('welcomeName').textContent = `👋 ${nickname}，你好！`;
+  
+  // Admin check
+  if (user.email === ADMIN_EMAIL) {
+    document.getElementById('adminLink').classList.remove('hidden');
+  }
+  
+  // Load credits
+  const { data: creditData } = await supabase.from('credits').select('credits').eq('user_id', user.id).single();
+  const credits = creditData?.credits ?? 0;
+  document.getElementById('creditCount').textContent = credits;
+  
+  const btn = document.getElementById('startTutorBtn');
+  if (credits <= 0) {
+    btn.disabled = true;
+    btn.textContent = '😢 次数不足，请先赞赏充值';
+    btn.style.background = '#888';
+  } else {
+    btn.disabled = false;
+    btn.textContent = '🚀 开始 AI 辅导（消耗1次）';
+    btn.style.background = '';
+  }
+  
+  // Load history
+  const { data: logs } = await supabase.from('credit_logs')
+    .select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20);
+  
+  const tbody = document.getElementById('historyBody');
+  if (logs && logs.length > 0) {
+    tbody.innerHTML = logs.map(l => `
+      <tr>
+        <td>${new Date(l.created_at).toLocaleString('zh-CN')}</td>
+        <td>${l.action}</td>
+        <td style="color:${l.amount>0?'#2ea043':'#e94560'}">${l.amount>0?'+':''}${l.amount}</td>
+        <td>${l.balance}</td>
+      </tr>
+    `).join('');
+  } else {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa">暂无记录，快去赞赏获取次数吧！</td></tr>';
+  }
+}
+
+// ==================== 开始辅导 ====================
+async function startTutoring() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return showToast('请先登录', 'error');
+  
+  const { data: creditData } = await supabase.from('credits').select('credits').eq('user_id', user.id).single();
+  if (!creditData || creditData.credits <= 0) return showToast('次数不足！请先赞赏充值', 'error');
+  
+  // 扣减1次
+  const newCredits = creditData.credits - 1;
+  await supabase.from('credits').update({ credits: newCredits }).eq('user_id', user.id);
+  await supabase.from('credit_logs').insert({
+    user_id: user.id, action: '🤖 AI辅导', amount: -1, balance: newCredits
+  });
+  
+  showToast('已消耗1次，跳转中...');
+  
+  // 弹窗引导
+  setTimeout(() => {
+    const qqNumber = prompt(
+      '🎉 即将开始AI辅导！\n\n' +
+      '请添加AI教练QQ：等待管理员提供\n' +
+      '或直接在本页面底部扫码加入QQ群\n\n' +
+      '添加时请备注你的邮箱：' + user.email + '\n' +
+      '(点击确定继续)'
+    );
+    loadDashboard();
+  }, 500);
+}
+
+// ==================== 初始化 ====================
+document.addEventListener('DOMContentLoaded', () => {
+  if (!supabase) {
+    document.getElementById('authSection').innerHTML = `
+      <div class="card" style="text-align:center">
+        <h2>⚙️ 正在配置...</h2>
+        <p style="color:#888;margin-top:12px">请先在 ai-tutor.html 中配置 Supabase 连接信息</p>
+      </div>`;
+    return;
+  }
+  
+  // 监听登录状态
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (session) loadDashboard();
+    else {
+      document.getElementById('authSection').classList.remove('hidden');
+      document.getElementById('dashboardSection').classList.add('hidden');
+    }
+  });
+  
+  loadDashboard();
+});
+</script>
+
+</body>
+</html>
