@@ -125,7 +125,7 @@ async function loadAdmin() {
 
 function renderUsers() {
   var q = $('searchInput').value.toLowerCase();
-  var filtered = allUsers.filter(function(u) { return (u.user_id || '').toLowerCase().includes(q); });
+  var filtered = allUsers.filter(function(u) { return (u.email || u.user_id || '').toLowerCase().includes(q); });
   var list = $('userList');
   list.innerHTML = filtered.map(function(u) {
     var c = u.credits || 0;
