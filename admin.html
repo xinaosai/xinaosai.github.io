@@ -130,7 +130,7 @@ function renderUsers() {
   list.innerHTML = filtered.map(function(u) {
     var c = u.credits || 0;
     return '<div class="user-row">' +
-      '<div class="user-info"><div class="user-email">' + u.user_id.substring(0, 12) + '...</div><div class="user-credits">剩余 <strong style="color:' + (c > 0 ? '#3fb950' : '#f85149') + '">' + c + '</strong> 次</div></div>' +
+      '<div class="user-info"><div class="user-email">' + (u.email || u.user_id.substring(0, 12)) + '...</div><div class="user-credits">剩余 <strong style="color:' + (c > 0 ? '#3fb950' : '#f85149') + '">' + c + '</strong> 次</div></div>' +
       '<div class="actions">' +
         '<button class="btn-sm btn-grn" onclick="addCredits(\'' + u.user_id + '\',1)">+1</button>' +
         '<button class="btn-sm btn-grn" onclick="addCredits(\'' + u.user_id + '\',6)">+6</button>' +
