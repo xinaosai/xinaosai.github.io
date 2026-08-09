@@ -352,6 +352,8 @@ const modules = [
   { id:'m17', num:'17', name:'图论基础',               desc:'最短路、MST、拓扑排序',                    days:1, phase:'核心突破' },
   { id:'m18', num:'18', name:'数学进阶',               desc:'数论(gcd/质数/模)、排列组合、概率',         days:2, phase:'核心突破' },
   { id:'m19', num:'19', name:'真题与应试',             desc:'阅读程序/完善程序技巧、时间分配',            days:2, phase:'题型实战' },
+  { id:'m20', num:'20', name:'字符串算法',             desc:'KMP、字符串哈希、Trie树、Manacher',       days:1, phase:'核心突破' },
+  { id:'m21', num:'21', name:'补充专题',               desc:'安全·多媒体·面向对象·语言分类·复杂度',   days:1, phase:'基础扫盲' },
 ];
 
 // ============================================================
@@ -460,6 +462,10 @@ const knowledgePoints = {
     { title:'堆 (Heap)', desc:'完全二叉树。大根堆(父≥子)、小根堆(父≤子)。插入O(log n)，删除堆顶O(log n)。', tags:['核心'] },
     { title:'图 (Graph)', desc:'有向/无向、带权/无权。存储方式：邻接矩阵(O(n²)空间)、邻接表(O(n+m))。', tags:['核心','必考'] },
     { title:'图的遍历', desc:'DFS(递归/栈)、BFS(队列)。需用visited[]避免重复访问。', tags:['核心','必考'] },
+    { title:'并查集 (Union-Find)', desc:'支持合并(union)和查找(find)两个操作的数据结构。路径压缩+按秩合并可达接近O(1)的均摊复杂度。常用于判断连通性、Kruskal算法。', tags:['核心', '必考'] },
+    { title:'哈夫曼树 / 哈夫曼编码', desc:'带权路径长度(WPL)最小的二叉树。贪心构建：每次取两个最小权值节点合并。用于数据压缩。哈夫曼编码是前缀编码，总长度最短。', tags:['核心', '必考'] },
+    { title:'哈希表 (Hash Table)', desc:'通过哈希函数将键映射到索引。冲突处理：拉链法(链表)、开放寻址法(线性探测/二次探测)。装载因子=元素数/表大小。查找/插入均摊O(1)。', tags:['核心', '必考'] },
+    { title:'树的术语', desc:'度(节点的子节点数)、叶子(度为0)、高度/深度(根到叶的最长路径)、森林(多棵互不相交的树)。二叉树性质：n0=n2+1（叶子数=度为2的节点数+1）。', tags:['核心'] },
   ],
   // ---- 排序与查找 ----
   m13: [
@@ -479,6 +485,7 @@ const knowledgePoints = {
     { title:'BFS (广度优先搜索)', desc:'队列实现，按层遍历。常用于求最短路径(边权相等时)。', tags:['核心','必考'] },
     { title:'回溯法', desc:'DFS的一种，在搜索过程中撤销选择(恢复状态)。典型问题：N皇后、全排列、子集和。', tags:['核心'] },
     { title:'剪枝', desc:'在搜索过程中提前排除不可能的解，减少搜索空间。常见剪枝：可行性剪枝、最优性剪枝。', tags:['进阶'] },
+    { title:'二分答案', desc:'当问题满足单调性时，二分可能的答案范围再验证可行性。典型问题："最大值最小化"或"最小值最大化"。O(log 答案范围 × check复杂度)。', tags:['核心', '必考'] },
   ],
   // ---- 贪心·分治·递推 ----
   m15: [
@@ -502,6 +509,8 @@ const knowledgePoints = {
     { title:'最小生成树——Kruskal', desc:'按边权重从小到大选边，不形成环。O(m log m)。用并查集判断是否形成环。', tags:['核心'] },
     { title:'最小生成树——Prim', desc:'从一个节点开始，每次选可达的最小边加入。类似Dijkstra。O(n²)或O(m log n)。', tags:['熟悉'] },
     { title:'拓扑排序', desc:'对有向无环图(DAG)排序。每次选入度为0的节点删除。应用：任务调度、依赖解析。', tags:['核心'] },
+    { title:'图的连通性', desc:'连通分量：无向图中极大连通子图。强连通分量(SCC)：有向图中任意两节点互相可达的极大子图。Tarjan/Kosaraju算法O(n+m)求SCC。', tags:['进阶'] },
+    { title:'欧拉路径与哈密顿路径', desc:'欧拉路径：经过每条边恰好一次（存在条件：0或2个奇度点）。哈密顿路径：经过每个节点恰好一次（NP难问题）。欧拉回路要求所有点度数为偶数。', tags:['进阶'] },
   ],
   // ---- 数学进阶 ----
   m18: [
@@ -513,6 +522,19 @@ const knowledgePoints = {
     { title:'排列', desc:'从n个中选k个有序排列：P(n,k)=n!/(n-k)!。全排列：n!。', tags:['核心','必考'] },
     { title:'组合', desc:'从n个中选k个无序组合：C(n,k)=n!/(k!(n-k)!)。组合递推：C(n,k)=C(n-1,k)+C(n-1,k-1)(杨辉三角)。', tags:['核心','必考'] },
     { title:'概率初步', desc:'P(A)=事件A发生的结果数/总结果数。条件概率、期望(加权平均)。', tags:['核心'] },
+    { title:'线性筛 (欧拉筛)', desc:'O(n)求[1,n]所有质数。每个合数只被其最小质因子筛掉一次。同时可求每个数的最小质因子。比埃氏筛更快。', tags:['进阶'] },
+    { title:'逆元 (模意义下的倒数)', desc:'若 a×b ≡ 1 (mod m)，则b是a在模m下的逆元。求法：费马小定理(a^(m-2)，m为质数)或扩展欧几里得。用于模除法：(a/b)%m = (a×inv(b))%m。', tags:['核心', '必考'] },
+    { title:'费马小定理', desc:'若p是质数且gcd(a,p)=1，则a^(p-1) ≡ 1 (mod p)。推论：a^(p-2) ≡ a^(-1) (mod p)，可用于求逆元。', tags:['核心'] },
+    { title:'扩展欧几里得算法', desc:'求解 ax + by = gcd(a,b) 的整数解x,y。可用于求逆元、解同余方程。返回gcd的同时求出x,y。', tags:['进阶'] },
+    { title:'卡特兰数', desc:'C(n) = C(2n,n)/(n+1)。前几项：1,1,2,5,14,42...。应用：合法括号序列数、出栈序列数、n个节点的不同BST数、凸多边形三角剖分数。', tags:['核心', '必考'] },
+    { title:'错排问题 (Derangement)', desc:'n个元素都不在自己原本位置的排列数。D(0)=1, D(1)=0, D(n)=(n-1)(D(n-1)+D(n-2))。近似：D(n)≈n!/e。', tags:['进阶'] },
+    { title:'容斥原理', desc:'|A∪B∪C| = |A|+|B|+|C| - |A∩B|-|A∩C|-|B∩C| + |A∩B∩C|。用于计算"至少满足一个条件"的元素数，处理重复计数问题。', tags:['核心', '必考'] },
+    { title:'鸽巢原理 (抽屉原理)', desc:'n+1个物体放入n个抽屉，至少有一个抽屉包含不少于2个物体。推广：至少⌈总数/n⌉个。应用于证明存在性问题。', tags:['核心'] },
+    { title:'博弈论基础 (Nim游戏)', desc:'n堆石子，两人轮流任选一堆取任意数量，取光者胜。异或和为0则先手必败，否则先手必胜（SG函数基础）。', tags:['进阶'] },
+    { title:'矩阵基础与矩阵快速幂', desc:'矩阵乘法：A(m×n)×B(n×p)=C(m×p)。不满足交换律。矩阵快速幂O(k³log n)求递推数列第n项（如斐波那契）。', tags:['进阶'] },
+    { title:'数列与递推关系', desc:'等差数列求和：n(a₁+aₙ)/2。等比数列求和：a₁(1-q^n)/(1-q)。递推式求解：特征方程法（如f(n)=pf(n-1)+qf(n-2)）。', tags:['核心', '必考'] },
+    { title:'浮点数的二进制表示', desc:'IEEE 754标准：单精度32位(float)：1位符号+8位阶码+23位尾数。双精度64位(double)：1+11+52。0.1在二进制中无限循环，不能精确存储。', tags:['进阶'] },
+    { title:'同余方程与中国剩余定理', desc:'解形如 x≡a₁(mod m₁), x≡a₂(mod m₂)...的方程组。当m₁,m₂...两两互质时，CRT保证存在唯一解（模M=m₁m₂...）。', tags:['拓展'] },
   ],
   // ---- 真题与应试 ----
   m19: [
@@ -521,6 +543,27 @@ const knowledgePoints = {
     { title:'时间分配策略', desc:'选择题30-40分钟，阅读程序题40-50分钟，完善程序题30-40分钟。不会的先跳过，最后再回来。', tags:['策略'] },
     { title:'常见陷阱', desc:'数组越界、整数溢出、除零、未初始化变量、死循环、逻辑运算符短路求值。', tags:['策略'] },
     { title:'复杂度分析速查', desc:'O(1):常数级；O(log n):二分；O(n):线性；O(n log n):排序/分治；O(n²):双重循环；O(2ⁿ):指数级(一般不可行)。', tags:['核心'] },
+  ],
+
+  // ---- 字符串算法 ----
+  m20: [
+    { title:'KMP 算法', desc:'字符串匹配算法O(n+m)。核心：next数组（最长相等前后缀长度）。匹配失败时利用next数组跳过已匹配部分，主串指针不回溯。', tags:['核心', '必考'] },
+    { title:'字符串哈希 (String Hash)', desc:'将字符串映射为整数：hash(s) = (s[0]×Bⁿ+s[1]×Bⁿ⁻¹+...+s[n]) mod M。B取131或13331，M取大质数或使用双哈希(unsigned long long自然溢出)。O(1)子串比较。', tags:['核心', '必考'] },
+    { title:'Trie 树 (字典树)', desc:'多叉树结构，用于高效存储和查找字符串集合。每个节点表示一个前缀。支持插入/查找O(|s|)。典型应用：前缀匹配、最大异或对。', tags:['核心'] },
+    { title:'Manacher 算法', desc:'O(n)求最长回文子串。通过插入分隔符统一处理奇偶回文，维护最右回文边界，避免重复计算。', tags:['拓展'] },
+    { title:'AC 自动机（概述）', desc:'KMP + Trie的结合。用于多模式串匹配：先建Trie，再构建fail指针（类似KMP的next）。BFS逐层构建，匹配时沿fail指针跳转。', tags:['拓展'] },
+  ],
+
+  // ---- 补充专题 ----
+  m21: [
+    { title:'计算机病毒', desc:'病毒(寄生，感染文件)、蠕虫(自我复制，不寄生于文件)、木马(伪装成正常程序)、勒索软件。特征：传播性、隐蔽性、破坏性。', tags:['进阶'] },
+    { title:'网络安全与防火墙', desc:'防火墙：内部网与外部网之间控制数据包进出。加密算法：对称加密(同密钥，DES/AES) vs 非对称加密(公钥+私钥，RSA/ECC)。', tags:['进阶'] },
+    { title:'多媒体编码基础', desc:'图像：分辨率(像素数)、色彩深度(bits/pixel)、常见格式(BMP无压缩/PNG无损/JPG有损)。音频：采样率(Hz)、量化位数、声道数。视频：帧率(fps)、编码格式(H.264/H.265)。', tags:['进阶'] },
+    { title:'计算机语言分类', desc:'机器语言(二进制，机器直接执行)→汇编语言(助记符，低级语言)→高级语言(编译型：C/C++；解释型：Python/JS)。面向过程(C) vs 面向对象(C++/Java)。', tags:['基础'] },
+    { title:'面向对象基础', desc:'类(Class)是对象的模板，包含成员变量和成员函数。三大特性：封装(hide)、继承(reuse)、多态(override)。构造函数/析构函数自动调用。访问控制：public/protected/private。', tags:['进阶'] },
+    { title:'文件操作 (C++)', desc:'#include <fstream>。ifstream读/ofstream写/fstream读写。open/close。freopen("in.txt","r",stdin)重定向标准输入输出。', tags:['核心'] },
+    { title:'常见C++新特性 (C++11/14)', desc:'auto自动类型推导、范围for(auto x:vec)、lambda表达式[](){}、nullptr空指针、unordered_map/set。CSP-J/S评测环境通常支持C++14。', tags:['进阶'] },
+    { title:'时间复杂度估算速查', desc:'n≤10: O(n!)可行；n≤20: O(2ⁿ)；n≤500: O(n³)；n≤5000: O(n²)；n≤10⁶: O(n log n)；n≤10⁷: O(n)。竞赛中1秒约10⁸次基本运算。', tags:['核心'] },
   ],
 };
 
@@ -651,10 +694,10 @@ function renderRoadmap() {
 // ============================================================
 function renderAllAccordions() {
   const sections = [
-    { id:'computerAccordion', kps:[...knowledgePoints.m1, ...knowledgePoints.m2, ...knowledgePoints.m3, ...knowledgePoints.m4, ...knowledgePoints.m5, ...knowledgePoints.m6] },
+    { id:'computerAccordion', kps:[...knowledgePoints.m1, ...knowledgePoints.m2, ...knowledgePoints.m3, ...knowledgePoints.m4, ...knowledgePoints.m5, ...knowledgePoints.m6, ...knowledgePoints.m21] },
     { id:'mathAccordion', kps:knowledgePoints.m18 },
     { id:'cppAccordion', kps:[...knowledgePoints.m7, ...knowledgePoints.m8, ...knowledgePoints.m9, ...knowledgePoints.m10, ...knowledgePoints.m11] },
-    { id:'dsalgoAccordion', kps:[...knowledgePoints.m12, ...knowledgePoints.m13, ...knowledgePoints.m14, ...knowledgePoints.m15, ...knowledgePoints.m16, ...knowledgePoints.m17] },
+    { id:'dsalgoAccordion', kps:[...knowledgePoints.m12, ...knowledgePoints.m13, ...knowledgePoints.m14, ...knowledgePoints.m15, ...knowledgePoints.m16, ...knowledgePoints.m17, ...knowledgePoints.m20] },
     { id:'examStrategyAccordion', kps:knowledgePoints.m19 },
   ];
 
