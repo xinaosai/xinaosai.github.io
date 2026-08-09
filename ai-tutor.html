@@ -121,6 +121,12 @@ td,th{padding:8px;border-bottom:1px solid #e2e8f0;text-align:left}
     <button class="btn btn-red" id="tutorBtn" onclick="startTutor()" style="margin-top:16px">🚀 开始 AI 辅导（消耗1次）</button>
     <p style="text-align:center;color:#888;font-size:.8rem;margin-top:8px">每次辅导包含多轮对话，直到你满意为止</p>
   </div>
+  
+  <div class="card">
+    <h3>🎁 邀请有礼</h3>
+    <p style="text-align:center;color:#888;font-size:.9rem;margin:8px 0">每邀请一位好友注册，双方各得 <strong style="color:#e94560">1次</strong> 免费辅导</p>
+    <div class="fg" style="margin-top:12px"><label>🔗 你的专属邀请链接</label><input id="refLink" readonly onclick="this.select();document.execCommand("copy");alert("链接已复制！")" style="cursor:pointer;font-size:.85rem;text-align:center"></div>
+  </div>
   <div class="card qr">
     <h3>💰 赞赏充值</h3>
     <div class="plans">
@@ -164,6 +170,8 @@ var sb;
 try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.error(e); }
 var selectedPlan = 1;
 var chatMessages = [];
+var chatTimeout = null;
+function resetChatTimer() { if (chatTimeout) clearTimeout(chatTimeout); chatTimeout = setTimeout(function() { addMsg("ai", "⏰ 5分钟没有新消息，对话自动结束。\n\n如需继续，请重新开始辅导。"); setTimeout(closeChat, 3000); }, 300000); }
 
 function $(id) { return document.getElementById(id); }
 function hide(id) { $(id).classList.add('hide'); }
@@ -193,6 +201,15 @@ async function doReg() {
     await sb.from('credit_logs').insert({ user_id: r.data.user.id, action: '🎁 注册赠送', amount: 1, balance: 1 });
   }
   showMsg('regErr', '');
+  var refId = new URLSearchParams(location.search).get("ref");
+  if (refId && refId !== r.data.user.id) {
+    var refCr = await sb.from("credits").select("credits").eq("user_id", refId).single();
+    if (refCr.data) {
+      var refNc = (refCr.data.credits || 0) + 1;
+      await sb.from("credits").update({ credits: refNc }).eq("user_id", refId);
+      await sb.from("credit_logs").insert({ user_id: refId, action: "🎁 邀请奖励", amount: 1, balance: refNc });
+    }
+  }
   showDash();
 }
 
@@ -206,6 +223,7 @@ async function showDash() {
   if (!u.data.user) { hide('dashBox'); show('authBox'); return; }
   hide('authBox'); show('dashBox');
   var user = u.data.user;
+  $('refLink').value = "https://xinaosai.github.io/ai-tutor.html?ref=" + user.id;
   $('welcomeText').textContent = '👋 ' + (user.user_metadata?.nickname || user.email?.split('@')[0] || '同学') + '，你好！';
 
   var cr = await sb.from('credits').select('credits').eq('user_id', user.id).single();
@@ -245,11 +263,13 @@ function openChat() {
   chatMessages = [];
   $('chatMessages').innerHTML = '<div class="chat-msg ai">你好！我是小虾🦐，你的信奥赛AI教练。<br><br>今天想学什么？算法、数据结构、还是刷题？跟我说说你的问题吧～</div>';
   show('chatPanel');
+  resetChatTimer();
   $('chatInput').focus();
 }
 
 function closeChat() {
-  hide('chatPanel');
+  if (chatTimeout) clearTimeout(chatTimeout);
+  hide("chatPanel");
   chatMessages = [];
 }
 
@@ -301,7 +321,8 @@ async function sendMsg() {
     } else {
       var reply = data.reply || '（未获取到回复）';
       addMsg('ai', reply);
-      chatMessages.push({ role: 'assistant', content: reply });
+      chatMessages.push({ role: "assistant", content: reply });
+      resetChatTimer();
     }
   } catch(e) {
     removeTyping();
