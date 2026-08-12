@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<!-- v20260812.2: AI API 迁移到腾讯云 SCF，国内直连 -->
 <title>AI 1v1 辅导 - 信奥赛C++</title>
 <script src="assets/supabase.min.js"></script>
 <style>
@@ -320,7 +324,7 @@ async function sendMsg() {
     if (data.error) {
       addMsg('ai', '抱歉，出了点问题：' + data.error + '\n\n请稍后重试或联系管理员。');
     } else {
-      var reply = data.reply || '（未获取到回复）';
+      var reply = (data.reply && String(data.reply).trim()) ? data.reply : '抱歉，我暂时无法回答，请稍后再试。';
       addMsg('ai', reply);
       chatMessages.push({ role: "assistant", content: reply });
       resetChatTimer();
