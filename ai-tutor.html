@@ -164,8 +164,9 @@ td,th{padding:8px;border-bottom:1px solid #e2e8f0;text-align:left}
 var SUPABASE_URL = 'https://ikomfsvwkilqwlrlvvto.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_SbwyOuBjz6v1dePb8h2cFw_gHeFtnNn';
 var ADMIN_EMAIL = 'zhaomingyu0605@gmail.com';
-// Vercel API URL - set after Vercel deployment
-var CHAT_API_URL = 'https://xinaosai-github-io.vercel.app/api/chat';
+// AI API：腾讯云 SCF 函数（国内直连，无需 VPN）
+// 公网函数 URL，2026-08-12 部署
+var CHAT_API_URL = 'https://1467127320-89s1shywb7.ap-guangzhou.tencentscf.com/api/chat';
 var sb;
 try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.error(e); }
 var selectedPlan = 1;
@@ -326,7 +327,7 @@ async function sendMsg() {
     }
   } catch(e) {
     removeTyping();
-    addMsg('ai', '网络连接失败。API 可能还未部署，请先完成 Vercel 部署后再试。\n\n错误：' + e.message);
+    addMsg('ai', '网络连接失败，请稍后重试。\n\n错误：' + e.message);
   }
   
   $('sendBtn').disabled = false;
