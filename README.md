@@ -2,11 +2,11 @@
 
 # 🏆 信奥赛C++ · 从入门到夺金
 
-**国内访问 → [xinaosai-website.vercel.app](https://xinaosai-website.vercel.app)**
+**国内访问 → [xinaosai.github.io](https://xinaosai.github.io)**
 
-[![CSP-J](https://img.shields.io/badge/CSP--J-备考-blue)](https://xinaosai-website.vercel.app)
-[![CSP-S](https://img.shields.io/badge/CSP--S-备考-orange)](https://xinaosai-website.vercel.app)
-[![NOIP](https://img.shields.io/badge/NOIP-真题-red)](https://xinaosai-website.vercel.app)
+[![CSP-J](https://img.shields.io/badge/CSP--J-备考-blue)](https://xinaosai.github.io)
+[![CSP-S](https://img.shields.io/badge/CSP--S-备考-orange)](https://xinaosai.github.io)
+[![NOIP](https://img.shields.io/badge/NOIP-真题-red)](https://xinaosai.github.io)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/xinaosai/xinaosai.github.io)
 
 **纯前端 · 免费 · 无需登录 · 即开即用**
@@ -37,13 +37,13 @@
 - ✅ **真题题库** - CSP-J/S、NOIP 往届真题+详细题解
 - ✅ **知识自测** - 学习进度追踪、答题测验
 - ✅ **完全免费** - 无广告、无登录、即开即用
-- ✅ **国内可访问** - 部署在 Vercel，国内用户流畅访问
+- ✅ **国内可访问** - GitHub Pages 直连 + AI 辅导走腾讯云，无需 VPN
 
 ## 🚀 快速开始
 
 无需安装任何东西，打开浏览器访问：
 
-**👉 [xinaosai-website.vercel.app](https://xinaosai-website.vercel.app)**
+**👉 [xinaosai.github.io](https://xinaosai.github.io)**
 
 ## 🤝 贡献
 
